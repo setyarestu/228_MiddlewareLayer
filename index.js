@@ -1,11 +1,11 @@
 import "dotenv/config";
-import express from "express";
-import pg from "pg";
-import Joi from "joi";
+import express from 'express';
+import pg from 'pg';
+import Joi from 'joi';
 
-const app = express() 
+const app = express()
 const port = process.env.PORT 
-const { Pool } = pg
+const { Pool } = pg;
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -18,19 +18,33 @@ const pool = new Pool({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Middleware Logging
-app.use((req,res, next) =>{
-    const start = Date.now()
+
+//Middleware Logging
+app.use((req, res, next) => {
+    const start = Date.now();
 
     res.on('finish', () => {
-        const duration = Date.now() - start
+        const duration = Date.now() - start;
         console.log({
             method: req.method,
             url: req.originalUrl,
-            statusCode: req.statusCode,
-            duration: `${duration} ms`
+            status: res.statusCode,
+            duration: `${duration}ms`
         })
     })
-    next()
+    next();
 })
+
+// Response Envelpoe
+function successResponse(res, message, data, status = 200) {
+    return res.status(status).json({
+        success: true, message, data, error: null,
+    })
+}
+
+function errorResponse(res, message, data, status = null) {
+    return res.status(status).json({
+        success: false, message, data, error: details,
+    })
+}
 
