@@ -15,34 +15,3 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 })
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// Middleware Logging
-app.use((req,res, next) =>{
-    const start = Date.now()
-
-    res.on('finish', () => {
-        const duration = Date.now() - start
-        console.log({
-            method: req.method,
-            url: req.originalUrl,
-            statusCode: req.statusCode,
-            duration: `${duration} ms`
-        })
-    })
-    next()
-})
-
-// Response Envelope 
-function successResponse(res, message, data, status = 200) {
-    return res.status(status).json({
-        success: true, message, data , error: null
-    })
-}
-
-function errorResponse(res, message, data, status = null) {
-    return res.status(status).json({
-        success: false, message, data:null, error: details,
-    })
-}
