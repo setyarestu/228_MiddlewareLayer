@@ -156,3 +156,12 @@ app.use((req, res) => {
     return errorResponse(res, 'Endpoint tidak ditemukan', null, 404)
 })
 
+//global error handler
+app.use((err, req, res, next) => {
+    console.error(err)
+    if (res.headersSent){
+        return next(err)
+    }
+    return errorResponse(res, 'Terjadi kesalahan pada server', null, 500)
+})
+
